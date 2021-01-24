@@ -1,0 +1,231 @@
+<!DOCTYPE html><html lang="en" mode="dark" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="theme" content="Chirpy v2.7.2"><meta name="generator" content="Jekyll v4.2.0" /><meta property="og:title" content="Grand Central Dispatch(GCD)" /><meta name="author" content="grohong" /><meta property="og:locale" content="en_US" /><meta name="description" content="Threads" /><meta property="og:description" content="Threads" /><link rel="canonical" href="https://grohong.github.io//posts/Concurrency-CGD/" /><meta property="og:url" content="https://grohong.github.io//posts/Concurrency-CGD/" /><meta property="og:site_name" content="grohong" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2021-01-04T11:43:59+09:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Grand Central Dispatch(GCD)" /><meta name="twitter:site" content="@grohong2" /><meta name="twitter:creator" content="@grohong" /><meta name="google-site-verification" content="grohong iOS book 홍성호" /> <script type="application/ld+json"> {"description":"Threads","url":"https://grohong.github.io//posts/Concurrency-CGD/","@type":"BlogPosting","headline":"Grand Central Dispatch(GCD)","dateModified":"2021-01-04T11:43:59+09:00","datePublished":"2021-01-04T11:43:59+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://grohong.github.io//posts/Concurrency-CGD/"},"author":{"@type":"Person","name":"grohong"},"@context":"https://schema.org"}</script><title>Grand Central Dispatch(GCD) | grohong</title><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon.png"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon-precomposed.png"><link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicons/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicons/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicons/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicons/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicons/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicons/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicons/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicons/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicons/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicons/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/manifest.json"><meta name='msapplication-config' content='/assets/img/favicons/browserconfig.xml'><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="cdn.jsdelivr.net"><link rel="dns-prefetch" href="cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous"><link rel="preload" href="/assets/css/post.css" as="style"><link rel="stylesheet" href="/assets/css/post.css"><link rel="preload" as="style" href="/assets/css/lib/bootstrap-toc.min.css"><link rel="stylesheet" href="/assets/css/lib/bootstrap-toc.min.css" /> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script defer src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script async src="/assets/js/post.min.js"></script> <script defer src="/app.js"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-KZTWS17KYT"></script> <script> document.addEventListener("DOMContentLoaded", function(event) { window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-KZTWS17KYT'); }); </script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/assets/img/sample/avatar.jpg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">grohong</a></div><div class="site-subtitle font-italic"><a href="https://grohong.medium.com/">Medium</a>📝</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/tabs/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tabs/tags/" class="nav-link"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/tabs/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/tabs/about/" class="nav-link"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center"> <a href="https://github.com/grohong" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href="https://twitter.com/grohong2" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['grohong76','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>Grand Central Dispatch(GCD)</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>Grand Central Dispatch(GCD)</h1><div class="post-meta text-muted d-flex flex-column"><div> <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Mon, Jan 4, 2021, 11:43 AM +0900" > Jan 4 <i class="unloaded">2021-01-04T11:43:59+09:00</i> </span> by <span class="author"> grohong </span></div><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="1956 words">10 min</span></div></div><div class="post-content"><h2 id="threads"><strong>Threads</strong></h2><p><strong>Thread</strong>는 정확히는 <strong>thread of execution</strong>은 줄임말 입니다. 한 <strong>task(작업)</strong>의 자원을 시스템에서 어떻게 실행시키는지를 뜻하고 있죠. 실제로 우리가 사용하는 <strong>app</strong>에선 여러 <strong>작업(multiple tasks)</strong> 이 <strong>multiple thread</strong>로 동작합니다.<br /> 이런 <strong>multithreading</strong>로 작업했을 경우 많은 장점이 있습니다.</p><ul><li><strong>Faster execution</strong>: <em>concurrently</em>하게 작업되기 때문에 빠르게 작업이 가능<li><strong>Responsiveness</strong>: UI는 main thread에서만 작업 되기 때문에, 여러 작업을 핟더라도 app 반응에 영향이 없다.<li><strong>Optimized resource consumption</strong>: OS에 최적화 되어 있다.</ul><p>하지만, 아래와 같은 짤과 같이 우리가 직접 <em>OS의 thread를 <strong>직접</strong> 만들어서 사용하게 된다면</em> 성능은 다 안좋아 지는걸 느낄 수 있습니다.</p><p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/GCD/Thread.gif" alt="thread" /></p><blockquote><p>제목: 내가 만든 multi thread</p></blockquote><p><br /></p><h2 id="dispatch-queues"><strong>Dispatch queues</strong></h2><p>위와 같은 문제를 해결하기 위해 <strong>DispatchQueue</strong>를 사용할 수 있습니다.<br /> <strong>DispatchQueue</strong>는 직접 <ins><em>thread를 만드는 것이 아닌</em> OS에게 thread를 만들 queue를 제공하는 것</ins>입니다. 간단하게 말하면 OS에 직접 thread를 만드는 것이 아니고 만들어야할 thread를 queue에 넣어 OS에서 thread를 최적화해서 만들 도록 하는 것입니다.</p><p>코드는 간단합니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">label</span> <span class="o">=</span> <span class="s">"com.grohong.dispatch"</span>
+<span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="n">label</span><span class="p">)</span>
+</pre></table></code></div></div><p>이렇게 <strong>DispatchQueue</strong>에 간단한 라벨링으로 생성한다면, 후에 해당 라벨로 <strong>queue</strong>를 재사용 할 수 있습니다.</p><p><br /></p><h3 id="the-main-queue">The main queue</h3><p><strong>App</strong> 실행하게 되면 <strong>main dispatch queue</strong>가 만들어 집니다. 해당 <ins>queue의 <strong>serial queue</strong></ins>에서는 UI 작업이 순차적으로 일어납니다. 그러니 해당 queue에 작업을 넣으면 사용자의 UI 반응에 영향이 가기 때문에, 성능이 저하되는 걸 체감할 수 있습니다.</p><blockquote><p>DispatchQueue.main.sync { } 작업은 하면 안된다!</p></blockquote><p><br /></p><h3 id="quality-of-service">Quality of service</h3><p><strong>DispatchQueue</strong>는 <strong>serial</strong> 또는 <strong>concurrent</strong>하게 생성할 수 있습니다.<br /> <strong>concurrent</strong>한 DispatchQueue도 간단하게 생성 할 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">label</span> <span class="o">=</span> <span class="s">"com.grohong.dispatch.concurrent"</span>
+<span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="nv">attributes</span><span class="p">:</span> <span class="o">.</span><span class="n">concurrent</span><span class="p">)</span>
+</pre></table></code></div></div><p>이때, <strong>DispatchQueue</strong>의 <strong>Quality of service(QoS)</strong>를 설정하여 <ins>우선순위</ins>를 정할 수 있습니다.<br /> UI와 상관없는 작업을 <strong>우선순위</strong>를 정하여 사용하고 싶은경우 아래와 같이 <strong>global queue</strong>에 <strong>QoS</strong>를 만들어 넣어주면 됩니다.</p><blockquote><p><strong>Global queues</strong>는 항상 concurrent 이고 FIFO(first in, firsst out) 입니다.</p></blockquote><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInteractive</span><span class="p">)</span>
+</pre></table></code></div></div><p>개별 <strong>DispatchQueue</strong>도 다음과 같이 간단하게 만들 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> 
+                          <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">,</span>
+                          <span class="nv">attributes</span><span class="p">:</span> <span class="o">.</span><span class="n">concurrent</span><span class="p">)</span>
+</pre></table></code></div></div><p><strong>QoS</strong>는 6가지로 나뉘게 됩니다.</p><h4 id="userinteractive">.userInteractive</h4><p><strong>userInteractive</strong>는 가장 높은 순위로 UI 반응과 동시에 빠르게 반응할 작업을 넣어줍니다. <br /></p><h4 id="userinitiated">.userInitiated</h4><p><strong>.userInitiated</strong>는 사용자의 반응과 동시에 시작하지만, 비동기적으로 처리될 작업을 넣어줍니다. <br /></p><h4 id="utility">.utility</h4><p>위의 QoS는 성능이 중요한 작업이라면, <strong>.utility</strong>는 I/O, networking 과 data feed 등 급하지 않은 일을 에너지 효율과 성능을 동시에 신경 쓰는 작업을 넣어줍니다. <br /></p><h4 id="background">.background</h4><p><strong>.background</strong>는 사용자가 눈치채지 못할 정도의 작업을 넣어 줍니다. <br /></p><h4 id="default-and-unspecified">.default and .unspecified</h4><p>우선순위를 안정해준 <strong>default value</strong>이고, <strong>unspecified</strong> 거의 사용하지 않는 단계의 작업을 뜻합니다.</p><p><br /></p><h3 id="adding-task-to-queues">Adding task to queues</h3><p><strong>Dispatch queues</strong>는 <strong>task</strong>에 <strong>method</strong>를 <strong>sync</strong> 또는 <strong>async</strong> 하게 처리하도록 추가할 수 있습니다.<br /> 간단한 <strong>async</strong> <strong>method</strong>를 추가하는 코드를 봐보겠습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">utility</span><span class="p">)</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+  <span class="k">guard</span> <span class="k">let</span> <span class="nv">self</span> <span class="o">=</span> <span class="k">self</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+
+  <span class="c1">// Perform your work here</span>
+  <span class="c1">// ...</span>
+
+  <span class="c1">// Switch back to the main queue to</span>
+  <span class="c1">// update your UI</span>
+  <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span>
+    <span class="k">self</span><span class="o">.</span><span class="n">textLabel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"New articles available!"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>여기서 주의할 점은 <ins>UI의 업데이트는 항상 <strong>main queue</strong>에서 이뤄져야</ins> 한다는 것입니다.</p><p><br /></p><h2 id="dispatchgroup"><strong>DispatchGroup</strong></h2><p><strong>DispatchGroup</strong>은 <strong>class</strong>로 각각의 <strong>queue</strong>의 <strong>tasks</strong>를 <strong>group</strong>으로 묶어 관리할 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">group</span> <span class="o">=</span> <span class="kt">DispatchGroup</span><span class="p">()</span>
+
+<span class="n">someQueue</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="n">your</span> <span class="n">work</span> <span class="o">...</span> <span class="p">}</span> 
+<span class="n">someQueue</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="n">more</span> <span class="n">work</span> <span class="o">....</span> <span class="p">}</span>
+<span class="n">someOtherQueue</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="n">other</span> <span class="n">work</span> <span class="o">...</span> <span class="p">}</span> 
+
+<span class="n">group</span><span class="o">.</span><span class="nf">notify</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="p">)</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+  <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="n">textLabel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"All jobs have completed"</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>위에 코드에서 볼 수 있듯이, 각각의 <strong>queue</strong>에 <strong>group</strong>을 설정 할 수 있습니다.<br /> <strong>DispatchGroups</strong>은 <code class="language-plaintext highlighter-rouge">notify(queue: )</code>제공합니다. 해당 함수는 <strong>group</strong>에 모든 <strong>task</strong>가 모드 끝났을때 알려줍니다.</p><p><br /></p><h3 id="synchronous-waiting">Synchronous waiting</h3><p>만약 <strong>DispatchGroup</strong>에서 <strong>task</strong>가 끝나지 않아 <code class="language-plaintext highlighter-rouge">notify(queue: )</code>를 받지 못하는 경우가 생길 수 있습니다.<br /> 이럴 경우 <code class="language-plaintext highlighter-rouge">wait(timeout)</code> method를 사용하여 <code class="language-plaintext highlighter-rouge">.timeOut</code> 을 설정할 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">group</span> <span class="o">=</span> <span class="kt">DispatchGroup</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span>
+
+<span class="n">queue</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nf">print</span><span class="p">(</span><span class="s">"Start job 1"</span><span class="p">)</span>
+  <span class="kt">Thread</span><span class="o">.</span><span class="nf">sleep</span><span class="p">(</span><span class="nv">until</span><span class="p">:</span> <span class="kt">Date</span><span class="p">()</span><span class="o">.</span><span class="nf">addingTimeInterval</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+  <span class="nf">print</span><span class="p">(</span><span class="s">"End job 1"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">queue</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nf">print</span><span class="p">(</span><span class="s">"Start job 2"</span><span class="p">)</span>
+  <span class="kt">Thread</span><span class="o">.</span><span class="nf">sleep</span><span class="p">(</span><span class="nv">until</span><span class="p">:</span> <span class="kt">Date</span><span class="p">()</span><span class="o">.</span><span class="nf">addingTimeInterval</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+  <span class="nf">print</span><span class="p">(</span><span class="s">"End job 2"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="nf">wait</span><span class="p">(</span><span class="nv">timeout</span><span class="p">:</span> <span class="o">.</span><span class="nf">now</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="o">.</span><span class="n">timedOut</span> <span class="p">{</span>
+  <span class="nf">print</span><span class="p">(</span><span class="s">"I got tired of waiting"</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nf">print</span><span class="p">(</span><span class="s">"All the jobs have completed"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>위 코드를 보면, <code class="language-plaintext highlighter-rouge">wait(timeout)</code>에 5초의 <code class="language-plaintext highlighter-rouge">timeOut</code>를 주어 만약 <strong>timeout</strong> 파라미터 시간내에 <strong>task</strong>가 끝나지 않는다면 조건문에서 예외처리가 가능합니다.</p><p><br /></p><h3 id="wrapping-asynchronous-methods">Wrapping asynchronous methods</h3><p><strong>DispatchGroup</strong>에서는 위에 예제 처럼 <strong>queue</strong>의 <strong>task</strong>가 끝날경우 <strong>group</strong>에 <strong>noti</strong>를 줍니다. 하지만 <strong>queue</strong>의 <strong>task</strong> 내부의 작업이 <strong>async</strong>하게 끝날 경우에는 <strong>task</strong>가 다 끝나지 않은 상황에서 <strong>noti</strong>가 가는 경우가 생길 것입니다.<br /> 이럴때 <strong>DispatchGroup</strong>의 <strong>enter</strong> 와 <strong>leave</strong>를 이용하여 해결 할 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="n">queue</span><span class="o">.</span><span class="nf">dispatch</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// count is 1</span>
+  <span class="n">group</span><span class="o">.</span><span class="nf">enter</span><span class="p">()</span>
+  <span class="c1">// count is 2</span>
+  <span class="n">someAsyncMethod</span> <span class="p">{</span> 
+    <span class="k">defer</span> <span class="p">{</span> <span class="n">group</span><span class="o">.</span><span class="nf">leave</span><span class="p">()</span> <span class="p">}</span>
+    
+    <span class="c1">// Perform your work here,</span>
+    <span class="c1">// count goes back to 1 once complete</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>위의 코드 처럼 <strong>task</strong>가 시작될때 <strong>enter()</strong>를 호출하여 <strong>DispatchGroup</strong>에 들어가는 것을 알리고, <strong>async</strong>한 <strong>task</strong>가 끝날 경우 <strong>defer</strong>를 이용하여 마지막에 <strong>task</strong>가 마무리 됐음을 <strong>leave()</strong> 알려주면 됩니다.</p><p><br /></p><h2 id="semaphores"><strong>Semaphores</strong></h2><p><strong>Semaphore</strong>을 이용하면 <strong>task</strong>에 사용되는 리소스를 관리할 수 있습니다.<br /> 아래 코드 처럼 <strong>DispatchSemaphore</strong>를 생성할때 사용할 리소를 정할 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">semaphore</span> <span class="o">=</span> <span class="kt">DispatchSemaphore</span><span class="p">(</span><span class="nv">value</span><span class="p">:</span> <span class="mi">4</span><span class="p">)</span>
+</pre></table></code></div></div><p>해당 <strong>DispatchSemaphore</strong>는 <strong>wait</strong>를 이용해 리소스를 준비하고, <strong>signal</strong>를 이용하여 리소스 해제 타임을 조절할 수 있습니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">group</span> <span class="o">=</span> <span class="kt">DispatchGroup</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">queue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInteractive</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">semaphore</span> <span class="o">=</span> <span class="kt">DispatchSemaphore</span><span class="p">(</span><span class="nv">value</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">base</span> <span class="o">=</span> <span class="s">"https://wolverine.raywenderlich.com/books/con/image-from-rawpixel-id-"</span>
+<span class="k">let</span> <span class="nv">ids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">466881</span><span class="p">,</span> <span class="mi">466910</span><span class="p">,</span> <span class="mi">466925</span><span class="p">,</span> <span class="mi">466931</span><span class="p">,</span> <span class="mi">466978</span><span class="p">,</span> <span class="mi">467028</span><span class="p">,</span> <span class="mi">467032</span><span class="p">,</span> <span class="mi">467042</span><span class="p">,</span> <span class="mi">467052</span><span class="p">]</span>
+
+<span class="k">var</span> <span class="nv">images</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIImage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">id</span> <span class="k">in</span> <span class="n">ids</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"</span><span class="se">\(</span><span class="n">base</span><span class="se">)\(</span><span class="n">id</span><span class="se">)</span><span class="s">-jpeg.jpg"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+
+    <span class="n">semaphore</span><span class="o">.</span><span class="nf">wait</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="nf">enter</span><span class="p">()</span>
+
+    <span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+        <span class="k">defer</span> <span class="p">{</span>
+            <span class="nf">print</span><span class="p">(</span><span class="s">"Finish download </span><span class="se">\(</span><span class="n">id</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+            <span class="n">group</span><span class="o">.</span><span class="nf">leave</span><span class="p">()</span>
+            <span class="n">semaphore</span><span class="o">.</span><span class="nf">signal</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">,</span>
+           <span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+           <span class="k">let</span> <span class="nv">image</span> <span class="o">=</span> <span class="kt">UIImage</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">images</span><span class="o">.</span><span class="nf">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">task</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// Finish download 466881</span>
+<span class="c1">// Finish download 466910</span>
+<span class="c1">// Finish download 466925</span>
+<span class="c1">// Finish download 466931</span>
+<span class="c1">// Finish download 466978</span>
+<span class="c1">// Finish download 467028</span>
+<span class="c1">// Finish download 467032</span>
+<span class="c1">// Finish download 467042</span>
+<span class="c1">// Finish download 467052</span>
+</pre></table></code></div></div><p>위의 예제를 본다면, <strong>DispatchSemaphore</strong>의 리소스가 하나이기 때문에 이미지가 download가 순차적으로 이뤄지는걸 확인 할 수 있습니다.<br /> 하지만 리소스를 4개로 늘렸을 경우 리소스의 <strong>task</strong>가 끝나는 타이밍에 따라 다운로드가 다운이 이루어 집니다.</p><div class="language-swift highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre><span class="k">let</span> <span class="nv">semaphore</span> <span class="o">=</span> <span class="kt">DispatchSemaphore</span><span class="p">(</span><span class="nv">value</span><span class="p">:</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="c1">// Finish download 466881</span>
+<span class="c1">// Finish download 466910</span>
+<span class="c1">// Finish download 466931</span>
+<span class="c1">// Finish download 467028</span>
+<span class="c1">// Finish download 467032</span>
+<span class="c1">// Finish download 467042</span>
+<span class="c1">// Finish download 466925</span>
+<span class="c1">// Finish download 466978</span>
+<span class="c1">// Finish download 467052</span>
+
+<span class="c1">// Always change....</span>
+</pre></table></code></div></div></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/concurrency/'>Concurrency</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/ios/" class="post-tag no-text-decoration" >iOS</a> <a href="/tags/gcd/" class="post-tag no-text-decoration" >GCD</a> <a href="/tags/concurrency/" class="post-tag no-text-decoration" >Concurrency</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Grand Central Dispatch(GCD) - grohong&url=https://grohong.github.io//posts/Concurrency-CGD/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Grand Central Dispatch(GCD) - grohong&u=https://grohong.github.io//posts/Concurrency-CGD/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=Grand Central Dispatch(GCD) - grohong&url=https://grohong.github.io//posts/Concurrency-CGD/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-lastmod" class="post"> <span>Recent Update</span><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/RxSwift6(1)/">What's new in RxSwift6(1)</a><li><a href="/posts/Books-%EC%9D%BD%EA%B8%B0-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EA%B0%80-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EB%8B%A4(3)/">읽기 좋은 코드가 좋은 코드다(3)</a><li><a href="/posts/Books-%EC%9D%BD%EA%B8%B0-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EA%B0%80-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EB%8B%A4(2)/">읽기 좋은 코드가 좋은 코드다(2)</a></ul></div><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/book/">book</a> <a class="post-tag" href="/tags/rxswift6/">RxSwift6</a> <a class="post-tag" href="/tags/concurrency/">Concurrency</a> <a class="post-tag" href="/tags/gcd/">GCD</a> <a class="post-tag" href="/tags/ios/">iOS</a> <a class="post-tag" href="/tags/swift5/">Swift5</a></div></div></div><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/RxSwift6(2)/"><div class="card-body"> <span class="timeago small" > Jan 10 <i class="unloaded">2021-01-10T11:43:59+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>What's new in RxSwift6(2)</h3><div class="text-muted small"><p> 앞 포스팅에서는 Swift5가 RxSwift6에 어떻게 적용되었는지 살펴보았습니다. 이번 포스팅에서는 RxSwift6에 새롭게 추가된 Observable type 과 Operation을 알아보고, 사용성을 어떻게 개션 되었는지 살펴 보도록 하겠습니다! 👀 Infallible Infallible은 RxSwift6에서 새롭게 추가된 Observable...</p></div></div></a></div><div class="card"> <a href="/posts/RxSwift6(1)/"><div class="card-body"> <span class="timeago small" > Jan 9 <i class="unloaded">2021-01-09T11:43:59+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>What's new in RxSwift6(1)</h3><div class="text-muted small"><p> 2021년 RxSwift6가 새로운 로고와 함께 릴리즈 됐습니다. 🚀🚀 변경사항에 대해서는 해당 포스팅에서 살펴 볼 수 있습니다. 이번 포스팅에서는 각각의 변경사항이 어떻게 구현됐는지 알아보고, 어떻게 쓰일지 정리해 보도록 하겠습니다! Swift5 RxSwift6에서는 Swift5에서 새롭게 업데이트 된 내용이 반영되었습니다. 대표적으로 KeyPa...</p></div></div></a></div><div class="card"> <a href="/posts/Books-%EC%9D%BD%EA%B8%B0-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EA%B0%80-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EB%8B%A4(3)/"><div class="card-body"> <span class="timeago small" > Dec 24, 2020 <i class="unloaded">2020-12-24T00:15:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>읽기 좋은 코드가 좋은 코드다(3)</h3><div class="text-muted small"><p> Part 3, 루프와 논리를 단순화 하기 가독성을 높일 수 있는 최상의 방법은 읽어야 할 코드의 양을 줄이는 것입니다.(No Code, No Problem) 이를 위해 최대한 중복 코드를 줄이고, 가독성이 좋은 코드를 작성 하는 방법을 알아보겠습니다! 상관없는 하위문제 추출하기 📤 일반적인 목적의 코드를 프로젝트의 특정 코드에서 분리해야 합니...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/Books-%EC%9D%BD%EA%B8%B0-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EA%B0%80-%EC%A2%8B%EC%9D%80-%EC%BD%94%EB%93%9C%EB%8B%A4(3)/" class="btn btn-outline-primary"><p>읽기 좋은 코드가 좋은 코드다(3)</p></a> <a href="/posts/RxSwift6(1)/" class="btn btn-outline-primary"><p>What's new in RxSwift6(1)</p></a></div></div></div></div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script> <script type="text/javascript"> const imgs = document.querySelectorAll('#post-wrapper img'); const observer = lozad(imgs); observer.observe(); </script><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://twitter.com/grohong2">grohong</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy/" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-xl-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/book/">book</a> <a class="post-tag" href="/tags/rxswift6/">RxSwift6</a> <a class="post-tag" href="/tags/concurrency/">Concurrency</a> <a class="post-tag" href="/tags/gcd/">GCD</a> <a class="post-tag" href="/tags/ios/">iOS</a> <a class="post-tag" href="/tags/swift5/">Swift5</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://grohong.github.io/{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"><div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>{categories}</div><div><i class="fa fa-tag fa-fw"></i>{tags}</div></div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>' }); </script>
