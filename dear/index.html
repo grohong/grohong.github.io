@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dear: 우리에게 꼭 맞는 질문</title>
+<meta name="description" content="매일, 두 분에게 꼭 맞는 커플 질문 하나가 도착해요. 마음속 이야기를 들려주면 세상에 단 하나뿐인 질문이 되어, 오늘도 조금 더 가까워져요.">
+<link rel="icon" href="img/icon.png">
+<meta property="og:title" content="Dear: 우리에게 꼭 맞는 질문">
+<meta property="og:description" content="매일 한 질문으로 더 가까워지는 커플 앱">
+<meta property="og:image" content="https://grohong.github.io/dear/img/icon.png">
+<meta property="og:url" content="https://grohong.github.io/dear/">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --ground:#FFFBF5; --surface:#FFFFFF; --tint:#FFF0EB;
+    --ink:#3A3231; --soft:#635B59; --rule:#E5DAD5;
+    --coral:#E8918B; --coral-deep:#C96F69; --link:#0a66c2;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#171514; --surface:#211E1D; --tint:#282220;
+      --ink:#EDE0DD; --soft:#B5A9A5; --rule:#37312F;
+      --coral:#F2B3AE; --coral-deep:#F2B3AE; --link:#7ab8f5;
+    }
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo",sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px}
+  a{color:var(--link)}
+  :focus-visible{outline:2px solid var(--coral);outline-offset:2px;border-radius:4px}
+
+  /* 언어 전환 — JS 없으면 두 언어 모두 보인다 */
+  .lang{position:sticky;top:0;z-index:5;background:var(--ground);
+        border-bottom:1px solid var(--rule);padding:10px 0}
+  .lang .wrap{display:flex;gap:8px;align-items:center}
+  .lang button{font:inherit;font-size:13px;cursor:pointer;padding:4px 14px;border-radius:99px;
+               border:1px solid var(--rule);background:var(--surface);color:var(--soft)}
+  .lang button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+  .lang{display:none}
+  .js .lang{display:block}
+  .js [data-lang="en"]{display:none}
+  .js.show-en [data-lang="en"]{display:block}
+  .js.show-en [data-lang="ko"]{display:none}
+
+  header{text-align:center;padding:56px 0 40px}
+  header img.icon{width:104px;height:104px;border-radius:24px;display:block;margin:0 auto 20px;
+                  box-shadow:0 4px 16px rgba(58,50,49,.12)}
+  h1{font-size:30px;line-height:1.3;margin:0 0 8px;letter-spacing:-.02em}
+  .tagline{color:var(--coral-deep);font-size:16px;font-weight:600;margin:0 0 18px}
+  .promo{color:var(--soft);font-size:15.5px;margin:0 auto;max-width:34em}
+
+  .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:28px 0 0}
+  .cta a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;
+         font-size:14.5px;font-weight:600;padding:11px 22px;border-radius:12px;
+         background:var(--ink);color:var(--ground);border:1px solid var(--ink)}
+  .cta a.alt{background:transparent;color:var(--ink)}
+
+  .shots{display:flex;gap:14px;overflow-x:auto;padding:36px 0 8px;
+         scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .shots img{width:186px;flex:none;border-radius:16px;border:1px solid var(--rule);
+             scroll-snap-align:center;background:var(--surface)}
+
+  h2{font-size:21px;margin:52px 0 6px;letter-spacing:-.01em}
+  .feat{border-top:1px solid var(--rule);padding:22px 0}
+  .feat:first-of-type{border-top:0}
+  .feat h3{font-size:17px;margin:0 0 6px;color:var(--coral-deep)}
+  .feat p{margin:0;color:var(--soft);font-size:15px}
+
+  .support{background:var(--tint);border-radius:16px;padding:26px 24px;margin:44px 0 0}
+  .support h2{margin:0 0 6px;font-size:19px}
+  .support dl{margin:16px 0 0;display:grid;gap:14px}
+  .support dt{font-weight:600;font-size:15px;margin-bottom:2px}
+  .support dd{margin:0;color:var(--soft);font-size:14.5px}
+  .mail{font-size:16px;font-weight:600}
+
+  footer{margin-top:56px;border-top:1px solid var(--rule);padding:26px 0 60px;
+         color:var(--soft);font-size:13.5px}
+  footer nav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:14px}
+  footer p{margin:4px 0}
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="lang">
+  <div class="wrap">
+    <button type="button" id="btn-ko" aria-pressed="true">한국어</button>
+    <button type="button" id="btn-en" aria-pressed="false">English</button>
+  </div>
+</div>
+
+<!-- ───────────────────────── 한국어 ───────────────────────── -->
+<div data-lang="ko">
+<header class="wrap">
+  <img class="icon" src="img/icon.png" alt="Dear 앱 아이콘">
+  <h1>Dear: 우리에게 꼭 맞는 질문</h1>
+  <p class="tagline">매일 한 질문으로 더 가까워지는 커플 앱</p>
+  <p class="promo">매일, 두 분에게 꼭 맞는 커플 질문 하나가 도착해요. 마음속 이야기를 들려주면 세상에 단 하나뿐인 질문이 되어, 오늘도 조금 더 가까워져요.</p>
+  <div class="cta">
+    <a href="https://apps.apple.com/app/id6779977952">App Store에서 받기</a>
+    <a class="alt" href="https://play.google.com/store/apps/details?id=com.hcb.dearcouplecounselor">Google Play에서 받기</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="shots">
+    <img src="img/01_home.jpg" alt="홈 화면 — 오늘의 질문과 D-day" loading="lazy">
+    <img src="img/02_qna.jpg" alt="질문과 답변 화면" loading="lazy">
+    <img src="img/03_calendar.jpg" alt="커플 달력 화면" loading="lazy">
+    <img src="img/04_fortune.jpg" alt="오늘의 운세 화면" loading="lazy">
+    <img src="img/05_diary.jpg" alt="교환일기 화면" loading="lazy">
+  </div>
+
+  <h2>이런 걸 할 수 있어요</h2>
+
+  <div class="feat">
+    <h3>오늘의 커플 질문</h3>
+    <p>마음 속에 담아둔 이야기를 들려주세요. Dear가 두 분에게 꼭 맞는 따뜻한 질문을 매일 한 가지 만들어드려요. 꺼내기 어려운 마음도 자연스러운 대화가 되어요.</p>
+  </div>
+  <div class="feat">
+    <h3>교환일기</h3>
+    <p>매일의 기분과 감사, 오늘 있었던 일을 짧게 남겨보세요. 둘이 함께 쌓아가는 교환일기로 서로의 하루를 들여다보고, 주간·월간 회고로 우리의 시간을 돌아봐요.</p>
+  </div>
+  <div class="feat">
+    <h3>커플 달력</h3>
+    <p>기념일, 생일, 처음 만난 날까지 둘만의 소중한 날을 함께 기록하고 챙겨요.</p>
+  </div>
+  <div class="feat">
+    <h3>오늘의 운세 · 궁합 테스트</h3>
+    <p>한국 전통 운세를 바탕으로 나와 상대, 우리의 궁합을 가볍게 확인하고, 취향 궁합 테스트로 서로를 더 알아가요.</p>
+  </div>
+  <div class="feat">
+    <h3>안심 보안</h3>
+    <p>지문·얼굴 인증과 기기 비밀번호 잠금으로 둘만의 대화를 안전하게 지켜드려요.</p>
+  </div>
+
+  <section class="support" id="support">
+    <h2>문의 · 지원</h2>
+    <p style="margin:0;color:var(--soft);font-size:15px">궁금한 점이나 불편한 점이 있으면 언제든 메일 주세요. 확인하는 대로 답장드릴게요.</p>
+    <p class="mail" style="margin:14px 0 0"><a href="mailto:sh7903@gmail.com">sh7903@gmail.com</a></p>
+    <dl>
+      <dt>커플 연결은 어떻게 하나요?</dt>
+      <dd>앱을 처음 켜면 초대 코드가 나와요. 그 코드를 상대에게 보내거나, 상대의 코드를 입력하면 연결됩니다.</dd>
+      <dt>상대가 없어도 쓸 수 있나요?</dt>
+      <dd>연결 전에도 앱을 둘러볼 수 있어요. 질문·일기처럼 둘이 함께하는 기능은 연결한 뒤에 열립니다.</dd>
+      <dt>계정을 지우고 싶어요.</dt>
+      <dd>설정 화면에서 직접 탈퇴할 수 있어요. 탈퇴하면 내 프로필과 작성한 내용이 삭제됩니다.</dd>
+      <dt>연결을 끊고 싶어요.</dt>
+      <dd>설정 화면에서 커플 해제를 할 수 있어요. 해제하면 서로의 새 기록이 더는 보이지 않습니다.</dd>
+    </dl>
+  </section>
+</div>
+</div>
+
+<!-- ───────────────────────── English ───────────────────────── -->
+<div data-lang="en">
+<header class="wrap">
+  <img class="icon" src="img/icon.png" alt="Dear app icon">
+  <h1>Dear: Questions Made for Us</h1>
+  <p class="tagline">Couple questions &amp; diary</p>
+  <p class="promo">Every day, Dear creates one couple question made just for the two of you. Share what's on your heart, answer together, and grow a little closer.</p>
+  <div class="cta">
+    <a href="https://apps.apple.com/app/id6779977952">Get it on the App Store</a>
+    <a class="alt" href="https://play.google.com/store/apps/details?id=com.hcb.dearcouplecounselor">Get it on Google Play</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="shots">
+    <img src="img/01_home.jpg" alt="Home screen with today's question and D-day" loading="lazy">
+    <img src="img/02_qna.jpg" alt="Questions and answers screen" loading="lazy">
+    <img src="img/03_calendar.jpg" alt="Couple calendar screen" loading="lazy">
+    <img src="img/04_fortune.jpg" alt="Daily fortune screen" loading="lazy">
+    <img src="img/05_diary.jpg" alt="Exchange diary screen" loading="lazy">
+  </div>
+
+  <h2>What you can do</h2>
+
+  <div class="feat">
+    <h3>Daily Couple Question</h3>
+    <p>Share what's been on your mind, and Dear creates a question that fits the two of you perfectly. The things hard to bring up become conversations that bring you closer.</p>
+  </div>
+  <div class="feat">
+    <h3>Exchange Diary</h3>
+    <p>Jot down today's mood, a small gratitude, or what happened — in just a moment. Your shared diary lets you peek into each other's day, with weekly and monthly recaps to look back on your time together.</p>
+  </div>
+  <div class="feat">
+    <h3>Couple Calendar</h3>
+    <p>Never forget anniversaries, birthdays, or the day you met. Shared events keep you in sync.</p>
+  </div>
+  <div class="feat">
+    <h3>Daily Fortune &amp; Compatibility</h3>
+    <p>A light, fun daily reading for you, your partner, and your couple energy, inspired by traditional Korean astrology — plus a taste-matching quiz to know each other better.</p>
+  </div>
+  <div class="feat">
+    <h3>Private and Secure</h3>
+    <p>Biometric and device-PIN lock protect your conversations. Your story stays between the two of you.</p>
+  </div>
+
+  <section class="support">
+    <h2>Support</h2>
+    <p style="margin:0;color:var(--soft);font-size:15px">Questions or trouble? Email us any time — we read every message and reply as soon as we can.</p>
+    <p class="mail" style="margin:14px 0 0"><a href="mailto:sh7903@gmail.com">sh7903@gmail.com</a></p>
+    <dl>
+      <dt>How do we connect as a couple?</dt>
+      <dd>Open the app and you'll get an invite code. Send it to your partner, or enter theirs to connect.</dd>
+      <dt>Can I use it before connecting?</dt>
+      <dd>Yes — you can look around. Features you share, like questions and the diary, open up once you're connected.</dd>
+      <dt>How do I delete my account?</dt>
+      <dd>You can delete it yourself in Settings. Your profile and what you've written are removed.</dd>
+      <dt>How do we disconnect?</dt>
+      <dd>Settings lets you unlink the couple. After that, new entries are no longer shared.</dd>
+    </dl>
+  </section>
+</div>
+</div>
+
+<footer class="wrap">
+  <nav>
+    <a href="https://scsc3313.github.io/dear_privacy_policy_en.html">Privacy Policy</a>
+    <a href="https://scsc3313.github.io/dear_terms_en.html">Terms of Service</a>
+    <a href="https://scsc3313.github.io/dear_child_safety_en.html">Child Safety</a>
+    <a href="mailto:sh7903@gmail.com">Contact</a>
+  </nav>
+  <p>Dear — Hong Seong Ho</p>
+  <p>© 2026 Grohong. All rights reserved.</p>
+</footer>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  root.className += " js";
+  var ko = document.getElementById("btn-ko"), en = document.getElementById("btn-en");
+  function set(lang){
+    var isEn = lang === "en";
+    root.classList.toggle("show-en", isEn);
+    ko.setAttribute("aria-pressed", String(!isEn));
+    en.setAttribute("aria-pressed", String(isEn));
+    document.documentElement.lang = isEn ? "en" : "ko";
+  }
+  ko.addEventListener("click", function(){ set("ko"); });
+  en.addEventListener("click", function(){ set("en"); });
+  // 브라우저 언어가 한국어가 아니면 영어로 시작한다(심사자가 영어권일 수 있다).
+  if (!(navigator.language || "").toLowerCase().startsWith("ko")) set("en");
+})();
+</script>
+</body>
+</html>
