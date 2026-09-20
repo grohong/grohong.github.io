@@ -1,0 +1,12 @@
+# Dear — 앱마다 AdMob 계정이 달라 퍼블리셔 줄이 두 개다.
+# 크롤러는 앱마다 '자기 퍼블리셔 ID' 만 찾으므로 서로 간섭하지 않는다.
+# f08c47fec0942fa0 = Google 의 TAG 인증 ID(모든 Google 줄이 같은 값).
+
+# iOS — com.grohong.dear.app (App Store 6779977952)
+# 이 도메인이 실제로 담당하는 줄. App Store 마케팅 URL 이 grohong.github.io 를 가리켜야 크롤링된다.
+google.com, pub-3574916429019226, DIRECT, f08c47fec0942fa0
+
+# Android — com.hcb.dearcouplecounselor
+# Play 등록은 아직 scsc3313.github.io 를 가리키므로 실제 크롤은 그쪽 파일에서 일어난다.
+# 여기 둔 것은 나중에 Play 웹사이트를 이 도메인으로 옮겨도 그대로 동작하게 하려는 것.
+google.com, pub-3627200480099901, DIRECT, f08c47fec0942fa0
